@@ -500,14 +500,9 @@ class Attempt:
             
             content = "(Interaction summary)\n"
             action_idx = -1
-            if config.high_reward_only:
-                avg_reward = sum(modified_rewards) / len(modified_rewards)
             for i, attempt_prompt in enumerate(attempt_prompts_copy):
                 if attempt_prompt['role'] == "assistant":
                     action_idx += 1
-                    if config.high_reward_only:
-                        if modified_rewards[action_idx] < avg_reward:
-                            continue
                     action = SciWorldEnv.parse_action(attempt_prompt['content'])
                     action = re.sub(r'\s+', ' ', action)
                     if len(action) > 100:
@@ -786,6 +781,8 @@ async def run_evaluation(config: SciWorldConfig, data: dict = None):
                         
                         # Use a single attempt counter for all attempts
                         attempt_buffer = []
+                        if config.high_reward_only:
+                            reward_buffer = []
                         attempt_counter = 1
                         
                         # Add all bootstrap attempts
@@ -795,7 +792,8 @@ async def run_evaluation(config: SciWorldConfig, data: dict = None):
                             single_attempt.extend(attempt_obj.get_processed_attempt_prompts(config))
                             attempt_buffer.append(single_attempt)
                             attempt_counter += 1
-                        
+                            if config.high_reward_only:
+                                reward_buffer.append(sum(attempt_obj.rewards))
                         # Add all previous round attempts
                         for prev_round_idx in range(round_idx):
                             for _, attempt_obj in data[env_id]['round_attempts'][prev_round_idx].items():
@@ -804,7 +802,12 @@ async def run_evaluation(config: SciWorldConfig, data: dict = None):
                                 single_attempt.extend(attempt_obj.get_processed_attempt_prompts(config))
                                 attempt_buffer.append(single_attempt)
                                 attempt_counter += 1
-
+                                if config.high_reward_only:
+                                    reward_buffer.append(sum(attempt_obj.rewards))
+                        if config.high_reward_only:
+                            # avg_reward = sum(reward_buffer) / len(reward_buffer)
+                            # attempt_buffer = [attempt_buffer[i] for i in range(len(attempt_buffer)) if reward_buffer[i] >= avg_reward]
+                            attempt_buffer = [attempt_buffer[i] for i in range(len(attempt_buffer)) if reward_buffer[i] == 100]
                         if config.max_attempts_in_context is not None:
                             # Take the last config.max_attempts_in_context attempts
                             attempt_buffer = attempt_buffer[-config.max_attempts_in_context:]
@@ -1025,6 +1028,9 @@ async def run_evaluation(config: SciWorldConfig, data: dict = None):
                                     rewards=[0],
                                     extra_fields={"reflections": [{"role": "assistant", "content": "placeholder"}]},
                                 )
+                                # add to data
+                                data[i]['round_attempts'][round_idx][0] = attempt
+                                break
                             temperature = min(2, temperature * 1.2)
                             base_env = ScienceWorldEnvBase()
                             sciworld_env = SciWorldEnv(
