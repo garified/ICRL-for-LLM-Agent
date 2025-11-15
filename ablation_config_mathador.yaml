@@ -1,0 +1,35 @@
+# Ablation Study Configuration for Mathador
+#
+# Usage:
+#   python ablation_study.py ablation_config_mathador.yaml
+
+# Benchmark type
+benchmark_type: "mathador"
+
+# Required parameters
+checkpoint_path: /home/jovyan/shared/amoeini/neurips/ICRL-for-LLM-Agent/ICL/mathador/20251027_1746_b6a/checkpoint_round_49.pkl
+output_dir: ICL/mathador/20251027_1746_b6a_ablation
+config_path: /home/jovyan/shared/amoeini/neurips/ICRL-for-LLM-Agent/ICL/mathador/20251027_1746_b6a/config.yaml
+
+# Dataset parameters (matching mathador_config.yaml)
+dataset_path: "Mathador/mathador-10000.jsonl"
+num_problems: 100  # Should match original experiment
+num_shots: 2
+
+# Model configuration (matching mathador_config.yaml)
+model_name: "qwen3-next"
+model_encoder: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+api_base: "http://0.0.0.0:8000/v1"
+temperature: 1.0
+
+# ICRL parameters (matching mathador_config.yaml)
+num_initial_attempts: 2
+num_rounds: 50
+max_completion_tokens: 4096
+context_size: 262144
+context_size_safety_margin: 75
+max_attempt_length: 1024
+max_attempts_in_context: null
+
+# Execution
+parallelization_degree: 100

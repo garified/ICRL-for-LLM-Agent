@@ -32,6 +32,7 @@ vllm serve virtuoussy/Qwen2.5-7B-Instruct-RLVR --dtype auto --api-key hi -tp 4 -
 
 vllm serve virtuoussy/Qwen2.5-7B-Instruct-RLVR --dtype auto --api-key hi -tp 2 --gpu-memory-utilization 0.95 --port 11436 --max_model_len 4096
 
+
 # qwen3.32b no reasoning
 python3 math_bench.py dataset_name=MathArena/hmmt_feb_2025 postfix=hmmt disable_reasoning=true
 python3 math_bench.py dataset_name=MathArena/aime_2025 postfix=aime disable_reasoning=true
@@ -73,3 +74,15 @@ python3 math_bench.py dataset_name=MathArena/aime_2025 postfix=aime_prompt2 disa
 python3 math_bench.py dataset_name=MathArena/aime_2025 postfix=aime_prompt3 disable_reasoning=true alternate_prompt=3 vllm_address=http://localhost:11435/v1
 
 python3 math_bench.py dataset_name=MathArena/aime_2025 postfix=aime_random_reward disable_reasoning=true random_rewards=true vllm_address=http://localhost:11435/v1
+
+# mathador
+
+vllm serve Qwen/Qwen3-Next-80B-A3B-Instruct \
+  --tensor-parallel-size 4 \
+  --served-model-name qwen3-next 
+
+vllm serve google/gemma-3-27b-it     --data-parallel-size 8   --served-model-name qwen3-next
+
+python3 mathador_bench.py mathador_config.yaml
+
+python ablation_study_mathador.py ablation_config_mathador.yaml

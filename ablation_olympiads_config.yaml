@@ -1,0 +1,32 @@
+# Ablation Study Configuration for Olympiads
+# Usage: python ablation_study.py ablation_olympiads_config.yaml
+# (Old: python ablation_study_olympiads.py ablation_olympiads_config.yaml)
+
+# Benchmark type
+benchmark_type: "olympiads"
+
+# Required paths
+checkpoint_path: "ICL/olympiads/YYYYMMDD_HHMM_xxx/checkpoint_round_49.pkl"  # Path to checkpoint to analyze
+config_path: "ICL/olympiads/YYYYMMDD_HHMM_xxx/config.yaml"  # Path to original config
+output_dir: "ICL/olympiads/YYYYMMDD_HHMM_xxx_ablation"  # Where to save ablation results
+
+# Execution parameters
+parallelization_degree: 10  # Number of problems to process in parallel
+
+# Model configuration (inherited from config_path, can override here)
+# model_name: "qwen3-next"
+# model_encoder: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+# api_base: "http://0.0.0.0:8000/v1"
+# temperature: 1.0
+
+# Judge configuration (inherited from config_path, can override here)
+# judge_model_name: "qwen3-next"
+# judge_api_base: "http://0.0.0.0:8000/v1"
+# judge_temperature: 0.0
+
+# Example usage:
+# 1. Update checkpoint_path, config_path, and output_dir above
+# 2. Run: python ablation_study.py ablation_olympiads_config.yaml
+# 3. Results will be saved to output_dir/checkpoint_ablation.pkl
+# 4. Use plots_mathador.py plot_ablation_effect() to visualize results
+

@@ -1,0 +1,33 @@
+# AIME Benchmark Configuration Example
+# Usage: python aime_bench.py aime_config.yaml
+
+# Dataset configuration
+dataset_name: "AI-MO/aimo-validation-aime"
+num_problems: -1  # -1 for all 90 problems, or specify a smaller number
+
+# ICRL parameters
+num_initial_attempts: 2
+num_rounds: 50
+max_completion_tokens: 4096
+context_size: 262144
+parallelization_degree: 100
+max_attempts_in_context: null  # null means no limit
+max_attempt_length: 4096  # AIME solutions average ~2855 tokens, max ~5200 tokens
+
+# Model configuration (for generation)
+model_name: "qwen3-next"
+model_encoder: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+api_base: "http://0.0.0.0:8000/v1"
+# api_key: "your-api-key-here"  # Or set OPENAI_API_KEY environment variable
+temperature: 1.0
+
+# Judge configuration (for scoring)
+judge_model_name: "qwen3-next"
+judge_api_base: "http://0.0.0.0:8000/v1"
+judge_temperature: 0.0  # Use 0 for consistent scoring
+
+# Output configuration
+base_output_dir: "ICL/aime/"
+postfix: ""  # Optional postfix for output directory name
+debug_run: false  # Set to true for quick testing (2 problems, 3 rounds)
+

@@ -1,0 +1,45 @@
+# Example configuration for Mathador ICRL benchmark
+
+# Dataset configuration
+dataset_path: "Mathador/mathador-10000.jsonl"
+num_problems: 100  # Use -1 for all problems
+num_shots: 2  # Number of few-shot examples
+
+# ICRL parameters
+num_initial_attempts: 2
+num_rounds: 50
+max_completion_tokens: 4096
+context_size: 262144
+parallelization_degree: 100
+max_attempts_in_context: null  # null means no limit
+max_attempt_length: 1024
+
+# Model configuration
+# model_name: "openai/gpt-oss-20b"
+model_name: "qwen3-next"
+model_encoder: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+# api_base: "https://api.openai.com/v1"
+# api_base: "https://openrouter.ai/api/v1"
+api_base: "http://0.0.0.0:8000/v1"
+# api_key: "your-api-key-here"  # Or set OPENAI_API_KEY environment variable
+temperature: 1.0
+
+# Output
+base_output_dir: "ICL/mathador/"
+postfix: ""  # Optional postfix for the run name (e.g., "experiment1")
+debug_run: false
+
+# Usage:
+# python mathador_bench.py mathador_config.yaml
+# Output will be saved in: ICL/mathador/YYYYMMDD_HHMM_xxx/
+
+# With custom postfix:
+# python mathador_bench.py mathador_config.yaml postfix=experiment1
+# Output will be saved in: ICL/mathador/YYYYMMDD_HHMM_xxx_experiment1/
+
+# To run in debug mode (quick test):
+# python mathador_bench.py debug_run=true
+
+# To use config file and override parameters:
+# python mathador_bench.py mathador_config.yaml num_problems=5 num_rounds=10
+

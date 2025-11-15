@@ -1,0 +1,55 @@
+# Unified Ablation Study Configuration
+# Works for Mathador, AIME, and Olympiads benchmarks
+# Usage: python ablation_study.py ablation_config.yaml
+
+# Benchmark type (REQUIRED)
+benchmark_type: "olympiads"  # Options: "mathador", "aime", "olympiads"
+
+# Required paths
+checkpoint_path: "/home/jovyan/shared/amoeini/neurips/ICRL-for-LLM-Agent/ICL/olympiads/20251103_1935_073/checkpoint_round_49.pkl"  # Path to checkpoint to analyze
+config_path: "/home/jovyan/shared/amoeini/neurips/ICRL-for-LLM-Agent/ICL/olympiads/20251103_1935_073/config.yaml"  # Path to original config
+output_dir: "ICL/olympiads/20251103_1935_073_ablation"  # Where to save ablation results
+
+# Execution parameters
+parallelization_degree: 100  # Number of problems to process in parallel
+
+# Model configuration (inherited from config_path, can override here)
+# model_name: "qwen3-next"
+# model_encoder: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+# api_base: "http://0.0.0.0:8000/v1"
+# temperature: 1.0
+
+# Judge configuration (only for AIME/Olympiads, inherited from config_path)
+# judge_model_name: "qwen3-next"
+# judge_api_base: "http://0.0.0.0:8000/v1"
+# judge_temperature: 0.0
+
+# ============================================================================
+# EXAMPLES FOR DIFFERENT BENCHMARKS
+# ============================================================================
+
+# For Mathador:
+# benchmark_type: "mathador"
+# checkpoint_path: "ICL/mathador/20251027_0146_5e4/checkpoint_round_49.pkl"
+# config_path: "ICL/mathador/20251027_0146_5e4/config.yaml"
+# output_dir: "ICL/mathador/20251027_0146_5e4_ablation"
+
+# For AIME:
+# benchmark_type: "aime"
+# checkpoint_path: "ICL/aime/YYYYMMDD_HHMM_xxx/checkpoint_round_49.pkl"
+# config_path: "ICL/aime/YYYYMMDD_HHMM_xxx/config.yaml"
+# output_dir: "ICL/aime/YYYYMMDD_HHMM_xxx_ablation"
+
+# For Olympiads:
+# benchmark_type: "olympiads"
+# checkpoint_path: "ICL/olympiads/YYYYMMDD_HHMM_xxx/checkpoint_round_49.pkl"
+# config_path: "ICL/olympiads/YYYYMMDD_HHMM_xxx/config.yaml"
+# output_dir: "ICL/olympiads/YYYYMMDD_HHMM_xxx_ablation"
+
+# Usage:
+# 1. Set benchmark_type to your benchmark
+# 2. Update checkpoint_path, config_path, and output_dir
+# 3. Run: python ablation_study.py ablation_config.yaml
+# 4. Results saved to output_dir/checkpoint_ablation.pkl
+# 5. Visualize with: plots_mathador.py plot_ablation_effect()
+
