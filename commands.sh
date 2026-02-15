@@ -2,27 +2,27 @@
 
 # python3 llm_game24_api_refactor.py
 
-# python3 sciworld.py icrl_mode=ICRL num_envs=10 postfix="temp"
-# python3 sciworld.py icrl_mode=NO_REWARDS num_envs=10 postfix="no_rewards"
-# python3 sciworld.py icrl_mode=ICRL num_envs=10 postfix="3_attempts" positive_only=true
-# python3 sciworld.py icrl_mode=RANDOM_SAMPLING num_envs=10 postfix="random_sampling"
-# python3 sciworld.py icrl_mode=REFLEXION num_envs=29 postfix="reflexion_29"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=10 postfix="temp"
+# python3 run_sciworld.py icrl_mode=NO_REWARDS num_envs=10 postfix="no_rewards"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=10 postfix="3_attempts" positive_only=true
+# python3 run_sciworld.py icrl_mode=RANDOM_SAMPLING num_envs=10 postfix="random_sampling"
+# python3 run_sciworld.py icrl_mode=REFLEXION num_envs=29 postfix="reflexion_29"
 
 
 # final runs
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 postfix="29_4.1"
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 zero_out_rewards=true postfix="29_4.1_zero_out_rewards"
-python3 sciworld.py icrl_mode=ICRL num_envs=29 max_attempts_in_context=3 postfix="29_4.1_3_icl"
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 explore_only=true postfix="29_4.1_explore_only"
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 exploit_only=true postfix="29_4.1_exploit_only"
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 explore_and_exploit=true postfix="29_4.1_explore_and_exploit" checkpoint_path=/home/kdt3jq/ICRL_LLM/ICRL-for-LLM-Agent/ICL/sw/icrl/20250513_0019_29_4.1_explore_and_exploit
-# python3 sciworld.py icrl_mode=ICRL num_envs=29 neutral_prompt=true postfix="29_4.1_neutral_prompt" 
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 postfix="29_4.1"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 zero_out_rewards=true postfix="29_4.1_zero_out_rewards"
+python3 run_sciworld.py icrl_mode=ICRL num_envs=29 max_attempts_in_context=3 postfix="29_4.1_3_icl"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 explore_only=true postfix="29_4.1_explore_only"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 exploit_only=true postfix="29_4.1_exploit_only"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 explore_and_exploit=true postfix="29_4.1_explore_and_exploit"
+# python3 run_sciworld.py icrl_mode=ICRL num_envs=29 neutral_prompt=true postfix="29_4.1_neutral_prompt"
 
-# python3 sciworld.py icrl_mode=RANDOM_SAMPLING num_envs=29 postfix="29_4.1_random_sampling" max_env_steps=200 checkpoint_path=/home/kdt3jq/ICRL_LLM/ICRL-for-LLM-Agent/ICL/sw/random_sampling/20250512_1149_29_4.1_mini_long
-# python3 sciworld.py icrl_mode=REFLEXION num_envs=29 postfix="29_4.1_reflexion_obsfix"
-# python3 sciworld.py icrl_mode=REACT num_envs=29 postfix="29_4.1_react" 
-# python3 sciworld.py icrl_mode=SELFREFINE num_envs=29 postfix="29_4.1_selfrefine"
-# python3 sciworld.py icrl_mode=COT num_envs=29 postfix="29_4.1_cot"
+# python3 run_sciworld.py icrl_mode=RANDOM_SAMPLING num_envs=29 postfix="29_4.1_random_sampling" max_env_steps=200
+# python3 run_sciworld.py icrl_mode=REFLEXION num_envs=29 postfix="29_4.1_reflexion_obsfix"
+# python3 run_sciworld.py icrl_mode=REACT num_envs=29 postfix="29_4.1_react"
+# python3 run_sciworld.py icrl_mode=SELFREFINE num_envs=29 postfix="29_4.1_selfrefine"
+# python3 run_sciworld.py icrl_mode=COT num_envs=29 postfix="29_4.1_cot"
 
 # math
 
@@ -83,6 +83,6 @@ vllm serve Qwen/Qwen3-Next-80B-A3B-Instruct \
 
 vllm serve google/gemma-3-27b-it     --data-parallel-size 8   --served-model-name qwen3-next
 
-python3 mathador_bench.py mathador_config.yaml
+python3 run_mathador.py benchmarks/mathador/config.yaml
 
-python ablation_study_mathador.py ablation_config_mathador.yaml
+python -m analysis.ablation analysis/ablation_mathador.yaml

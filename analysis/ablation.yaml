@@ -1,6 +1,6 @@
 # Unified Ablation Study Configuration
 # Works for Mathador, AIME, and Olympiads benchmarks
-# Usage: python ablation_study.py ablation_config.yaml
+# Usage: python -m analysis.ablation analysis/ablation.yaml
 
 # Benchmark type (REQUIRED)
 benchmark_type: "olympiads"  # Options: "mathador", "aime", "olympiads"
@@ -49,7 +49,7 @@ parallelization_degree: 100  # Number of problems to process in parallel
 # Usage:
 # 1. Set benchmark_type to your benchmark
 # 2. Update checkpoint_path, config_path, and output_dir
-# 3. Run: python ablation_study.py ablation_config.yaml
+# 3. Run: python -m analysis.ablation analysis/ablation.yaml
 # 4. Results saved to output_dir/checkpoint_ablation.pkl
 # 5. Visualize with: plots_mathador.py plot_ablation_effect()
 

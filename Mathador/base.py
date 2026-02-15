@@ -105,7 +105,7 @@ def check_answer(message, target, base_numbers):
     try:
         last_block = re.findall(r'((?:\s*(?:\n|^)\s*\d+\s*[+\-*\/]\s*\d+\s*=\s*\d+\s*)+)(?:\n|$)', message.strip())[-1]
     except:
-        print('No answer block found')
+        logger.debug('No answer block found')
         return 0, 'wrong_format'
 
     avilable_numbers = base_numbers.copy()
@@ -120,24 +120,24 @@ def check_answer(message, target, base_numbers):
             raise ValueError('This should not happen', line)
         try:
             if float(oper1) != int(float(oper1)) or float(oper2) != int(float(oper2)) or float(result) != int(float(result)):
-                print('The numbers should be integers', line)
+                logger.debug('The numbers should be integers', line)
                 return 0, 'illegal_intermediate_number'
         except OverflowError:
-            print('The numbers are too big', line)
+            logger.debug('The numbers are too big', line)
             return 0, 'illegal_intermediate_number'
         oper1, oper2, result = int(oper1), int(oper2), int(result)
         if oper1 < 0 or oper2 < 0 or result < 0:
-            print('The numbers should be positive', line)
+            logger.debug('The numbers should be positive', line)
             return 0, 'illegal_intermediate_number'
         gold_result, valid = seval(oper1, oper2, operator)
         if gold_result != result or not valid:
-            print('The calculation is not correct', line)
+            logger.debug('The calculation is not correct', line)
             return 0, 'wrong_calculation'
         try:
             avilable_numbers.remove(int(oper1))
             avilable_numbers.remove(int(oper2))
         except:
-            print('You are using a number you should not', line)
+            logger.debug('You are using a number you should not', line)
             return 0, 'illegal_number_usage'
         avilable_numbers.append(int(result))
 
@@ -150,7 +150,7 @@ def check_answer(message, target, base_numbers):
         elif operator == '/':
             score += 3
         else:
-            print('The operator is not valid', line)
+            logger.debug('The operator is not valid', line)
             return 0, 'illegal_operator'
 
         used_operations.add(operator)
@@ -161,7 +161,7 @@ def check_answer(message, target, base_numbers):
     assert score <= 13 or len(base_numbers) > 5
 
     if result != target:
-        print('The result is not the target number')
+        logger.debug('The result is not the target number')
         return 0, 'wrong_result'
     score += 5
 

@@ -1,5 +1,5 @@
 # Mathematical Olympiads Benchmark Configuration
-# Usage: python olympiads_bench.py olympiads_config.yaml
+# Usage: python run_olympiads.py benchmarks/olympiads/config.yaml
 
 # Dataset configuration
 dataset_name: "AI-MO/olympiads-ref"

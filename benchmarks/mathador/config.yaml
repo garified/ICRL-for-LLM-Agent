@@ -30,16 +30,16 @@ postfix: ""  # Optional postfix for the run name (e.g., "experiment1")
 debug_run: false
 
 # Usage:
-# python mathador_bench.py mathador_config.yaml
+# python run_mathador.py benchmarks/mathador/config.yaml
 # Output will be saved in: ICL/mathador/YYYYMMDD_HHMM_xxx/
 
 # With custom postfix:
-# python mathador_bench.py mathador_config.yaml postfix=experiment1
+# python run_mathador.py benchmarks/mathador/config.yaml postfix=experiment1
 # Output will be saved in: ICL/mathador/YYYYMMDD_HHMM_xxx_experiment1/
 
 # To run in debug mode (quick test):
-# python mathador_bench.py debug_run=true
+# python run_mathador.py debug_run=true
 
 # To use config file and override parameters:
-# python mathador_bench.py mathador_config.yaml num_problems=5 num_rounds=10
+# python run_mathador.py benchmarks/mathador/config.yaml num_problems=5 num_rounds=10
 

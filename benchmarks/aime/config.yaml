@@ -1,5 +1,5 @@
 # AIME Benchmark Configuration Example
-# Usage: python aime_bench.py aime_config.yaml
+# Usage: python run_aime.py benchmarks/aime/config.yaml
 
 # Dataset configuration
 dataset_name: "AI-MO/aimo-validation-aime"
