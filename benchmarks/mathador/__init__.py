@@ -50,6 +50,12 @@ class MathadorConfig:
     api_key: Optional[str] = None
     temperature: float = 1.0
 
+    # Novelty reward
+    novelty_reward: bool = False
+    novelty_weight: float = 0.3
+    novelty_model: str = "Qwen/Qwen3-0.6B"
+    novelty_device: str = "cuda"
+
     # Output
     base_output_dir: str = "ICL/mathador/"
     postfix: str = ""
@@ -64,11 +70,29 @@ class MathadorConfig:
 class MathadorTask(Task):
     """Task implementation for Mathador benchmark"""
 
-    def __init__(self, dataset_path: str, num_problems: int = -1, num_shots: int = 2):
+    def __init__(
+        self,
+        dataset_path: str,
+        num_problems: int = -1,
+        num_shots: int = 2,
+        novelty_reward: bool = False,
+        novelty_weight: float = 0.3,
+        novelty_model: str = "Qwen/Qwen3-0.6B",
+        novelty_device: str = "cuda",
+    ):
         self.dataset_path = dataset_path
         self.num_problems = num_problems
         self.num_shots = num_shots
         self._problems: Optional[List[Problem]] = None
+
+        self._novelty_enabled = novelty_reward
+        self._novelty_weight = novelty_weight
+        self._novelty_scorer = None
+        self._solutions: dict[str, list[str]] = {}
+
+        if self._novelty_enabled:
+            from benchmarks.mathador.novelty import NoveltyScorer
+            self._novelty_scorer = NoveltyScorer(novelty_model, novelty_device)
 
     def get_problems(self) -> List[Problem]:
         if self._problems is not None:
@@ -143,15 +167,29 @@ Base numbers: {', '.join(map(str, data['base_numbers']))}"""
             logger.info(f"Using {self.num_shots} few-shot examples in prompts")
         return problems
 
-    async def score(self, solution: str, problem: Problem) -> float:
+    async def score(self, solution: str, problem: Problem):
         target = problem.metadata['target']
         base_numbers = problem.metadata['base_numbers']
         try:
             raw_score, reason = check_answer(solution, target, base_numbers)
-            return raw_score / 18.0
+            task_reward = raw_score / 18.0
         except Exception as e:
             logger.warning(f"Error scoring solution: {e}")
-            return 0.0
+            task_reward = 0.0
+
+        if not self._novelty_enabled:
+            return task_reward
+
+        # Compute novelty reward
+        problem_key = hash(problem.question)
+        prev_solutions = self._solutions.get(problem_key, [])
+        novelty = await self._novelty_scorer.score_novelty_async(solution, prev_solutions)
+
+        # Track this solution for future comparisons
+        self._solutions.setdefault(problem_key, []).append(solution)
+
+        combined = (1 - self._novelty_weight) * task_reward + self._novelty_weight * novelty
+        return (combined, {'task_reward': task_reward, 'novelty_reward': novelty})
 
 
 # ============================================================================
@@ -171,8 +209,14 @@ class MathadorPromptBuilder(PromptBuilder):
             truncated_tokens = tokens[-max_length:] + encoder.encode("...")
             content = encoder.decode(truncated_tokens)
         content = re.sub(r'\n+', '\n', content)
-        score = int(attempt.reward * 18)
-        return f"<Attempt>\n{content}\n</Attempt>\n**Score achieved: {score}/18 points**"
+        if 'novelty_reward' in attempt.extra_fields:
+            novelty = attempt.extra_fields['novelty_reward']
+            task_score = int(attempt.extra_fields['task_reward'] * 18)
+            score_line = f"**Task score: {task_score}/18 points | Novelty: {novelty:.2f}**"
+        else:
+            score = int(attempt.reward * 18)
+            score_line = f"**Score achieved: {score}/18 points**"
+        return f"<Attempt>\n{content}\n</Attempt>\n{score_line}"
 
     def get_instruction(self, is_exploration: bool, attempts: List[Attempt]) -> str:
         if not attempts:
@@ -193,7 +237,13 @@ async def main():
     api_key = config.api_key or os.getenv("OPENAI_API_KEY")
     client = AsyncOpenAI(base_url=config.api_base, api_key=api_key)
 
-    task = MathadorTask(config.dataset_path, config.num_problems, config.num_shots)
+    task = MathadorTask(
+        config.dataset_path, config.num_problems, config.num_shots,
+        novelty_reward=config.novelty_reward,
+        novelty_weight=config.novelty_weight,
+        novelty_model=config.novelty_model,
+        novelty_device=config.novelty_device,
+    )
     prompt_builder = MathadorPromptBuilder()
     llm_call = make_llm_call(client, config.model_name, config.temperature, config.max_completion_tokens)
     encoder = load_encoder(config.model_encoder)

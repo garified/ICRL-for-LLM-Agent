@@ -24,6 +24,12 @@ api_base: "http://0.0.0.0:8000/v1"
 # api_key: "your-api-key-here"  # Or set OPENAI_API_KEY environment variable
 temperature: 1.0
 
+# Novelty reward (toggle with novelty_reward: true)
+novelty_reward: false
+novelty_weight: 0.3
+novelty_model: "Qwen/Qwen3-0.6B"
+novelty_device: "cuda"
+
 # Output
 base_output_dir: "ICL/mathador/"
 postfix: ""  # Optional postfix for the run name (e.g., "experiment1")

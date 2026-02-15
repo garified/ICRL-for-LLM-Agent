@@ -378,14 +378,19 @@ class ICRL:
                 model_output = await self.llm_call(messages)
                 
                 # Score the attempt
-                reward = await self.task.score(model_output, problem)
-                
+                score_result = await self.task.score(model_output, problem)
+                if isinstance(score_result, tuple):
+                    reward, extra_fields = score_result
+                else:
+                    reward, extra_fields = score_result, {}
+
                 # Store the attempt
                 attempt = Attempt(
                     prompt=messages,
                     output=model_output,
                     reward=reward,
-                    round_idx=-1
+                    round_idx=-1,
+                    extra_fields=extra_fields,
                 )
                 problem_history.attempts.append(attempt)
                 
@@ -456,14 +461,19 @@ class ICRL:
             model_output = await self.llm_call(messages)
             
             # Score the attempt
-            reward = await self.task.score(model_output, problem)
-            
+            score_result = await self.task.score(model_output, problem)
+            if isinstance(score_result, tuple):
+                reward, extra_fields = score_result
+            else:
+                reward, extra_fields = score_result, {}
+
             # Store the attempt
             attempt = Attempt(
                 prompt=messages,
                 output=model_output,
                 reward=reward,
-                round_idx=round_idx
+                round_idx=round_idx,
+                extra_fields=extra_fields,
             )
             problem_history.attempts.append(attempt)
             

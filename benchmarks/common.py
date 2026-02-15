@@ -17,6 +17,7 @@ import dotenv
 from openai import AsyncOpenAI
 from omegaconf import OmegaConf
 from transformers import AutoTokenizer
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from icrl import ICRL, ICRLConfig
 
@@ -127,6 +128,14 @@ def parse_config(config_cls):
 def make_llm_call(client, model_name, temperature, max_tokens):
     """Return an async closure that calls the OpenAI-compatible API."""
 
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=2, max=60),
+        retry=retry_if_exception_type((Exception,)),
+        before_sleep=lambda rs: logger.warning(
+            f"LLM call failed ({rs.outcome.exception()}), retrying (attempt {rs.attempt_number})..."
+        ),
+    )
     async def llm_call(messages: list[dict]) -> str:
         response = await client.chat.completions.create(
             model=model_name,
@@ -134,6 +143,8 @@ def make_llm_call(client, model_name, temperature, max_tokens):
             temperature=temperature,
             max_tokens=max_tokens,
         )
+        if not response.choices:
+            raise RuntimeError("API returned empty choices")
         return response.choices[0].message.content
 
     return llm_call
