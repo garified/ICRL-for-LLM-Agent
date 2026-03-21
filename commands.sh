@@ -86,3 +86,13 @@ vllm serve google/gemma-3-27b-it     --data-parallel-size 8   --served-model-nam
 python3 run_mathador.py benchmarks/mathador/config.yaml
 
 python -m analysis.ablation analysis/ablation_mathador.yaml
+
+################################################################################
+
+# mathador via openrouter (grok-4.1-fast), 100 problems, 10 rounds
+OPENAI_API_KEY=$(grep OPENROUTER_API_KEY .env | cut -d= -f2) python3 run_mathador.py benchmarks/mathador/config.yaml num_problems=100 num_rounds=10 num_initial_attempts=2 max_completion_tokens=4096 context_size=131072 parallelization_degree=10 model_name=x-ai/grok-4.1-fast model_encoder=gpt2 api_base=https://openrouter.ai/api/v1 temperature=1.0 novelty_reward=false postfix=grok_baseline
+OPENAI_API_KEY=$(grep OPENROUTER_API_KEY .env | cut -d= -f2) python3 run_mathador.py benchmarks/mathador/config.yaml num_problems=100 num_rounds=10 num_initial_attempts=2 max_completion_tokens=4096 context_size=131072 parallelization_degree=10 model_name=x-ai/grok-4.1-fast model_encoder=gpt2 api_base=https://openrouter.ai/api/v1 temperature=1.0 novelty_reward=true novelty_weight=0.3 novelty_model=Qwen/Qwen3-0.6B novelty_device=cuda postfix=grok_novelty
+
+# mathador via openrouter (qwen3-235b), 100 problems, 10 rounds
+OPENAI_API_KEY=$(grep OPENROUTER_API_KEY .env | cut -d= -f2) python3 run_mathador.py benchmarks/mathador/config.yaml num_problems=100 num_rounds=10 num_initial_attempts=2 max_completion_tokens=4096 context_size=131072 parallelization_degree=10 model_name=qwen/qwen3-235b-a22b-2507 model_encoder=gpt2 api_base=https://openrouter.ai/api/v1 temperature=1.0 novelty_reward=false postfix=qwen3_baseline
+OPENAI_API_KEY=$(grep OPENROUTER_API_KEY .env | cut -d= -f2) python3 run_mathador.py benchmarks/mathador/config.yaml num_problems=100 num_rounds=10 num_initial_attempts=2 max_completion_tokens=4096 context_size=131072 parallelization_degree=10 model_name=qwen/qwen3-235b-a22b-2507 model_encoder=gpt2 api_base=https://openrouter.ai/api/v1 temperature=1.0 novelty_reward=true novelty_weight=0.3 novelty_model=Qwen/Qwen3-0.6B novelty_device=cuda postfix=qwen3_novelty
